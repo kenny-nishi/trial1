@@ -5,6 +5,16 @@
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
 #include <std_msgs/msg/string.h>
+#include <std_msgs/msg/int32.h>
+
+#include <Arduino.h>
+#include <ESP32Servo.h>
+#define ServoPin 23
+
+// set up servo
+Servo servo;
+int current_angle = 90;
+
 
 //执行器,用于驱动节点的事件循环和定时器。
 rclc_executor_t executor;
@@ -20,6 +30,22 @@ rcl_publisher_t publisher;
 rcl_timer_t timer;
 //消息,用于存储消息数据。
 std_msgs__msg__String msg;
+
+// set up the subscription
+rcl_subscription_t subscription;
+std_msgs__msg__Int32 msg;
+std_msgs__msg__Int32 stauts;
+
+/*
+sub_callback() the recall function of subscription
+*/
+
+void sub_callback(const void * msgin){
+  const std_msgs__msg__Int32 *message = (const std_msgs__msg__Int32 *) msgin;
+  // digitalWrite(LED_BUILTIN, msg->data)); 
+  
+}
+
 
 
 /* 
@@ -81,6 +107,52 @@ void setup()
   rclc_executor_init(&executor, &support.context, 1, &allocator);
   // 给执行器添加定时器
   rclc_executor_add_timer(&executor, &timer);
+
+
+
+
+  // set up the subscription
+
+  // set up the servo
+  servo.attach(ServoPin, 550, 2400);
+  servo.write(90);
+}
+
+
+void servo_movement(){
+  /*
+  For our servo, the range of angle is 0-180
+
+  For the head to turn right, set it towards 0
+  For the head to turn left, set it towards 180
+
+  While we want it to face exactly farward (90), we can set it to 90
+  */
+  
+  Serial.println("Please input angle:");
+  while(Serial.available() == 0);
+  int target_angle = Serial.parseInt();
+  Serial.print("Angle is: ");
+  Serial.println(target_angle);
+
+  // instead of direct turning, we allow it to move only 10 degree each time
+
+  if (current_angle < target_angle){
+    for (int i = current_angle; i <= target_angle; i++){
+      servo.write(i);
+      delay(20);
+    }
+  }
+  else{
+    for (int i = current_angle; i >= target_angle; i--){
+      servo.write(i);
+      delay(20);
+    }
+  }
+
+  current_angle = target_angle;
+
+  delay(1000);
 }
 
 void loop()
@@ -88,7 +160,12 @@ void loop()
   delay(100);
   // 循环处理数据
   rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100));
+  servo_movement();
 }
+
+
+
+
 
 
 
