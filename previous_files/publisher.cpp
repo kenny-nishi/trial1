@@ -1,3 +1,6 @@
+// File: publisher.cpp
+// it is using the wifi to do the publisher 
+
 #include <Arduino.h>
 #include <micro_ros_platformio.h>
 #include <WiFi.h>

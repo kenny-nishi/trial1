@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
-#define ServoPin 23
+#define ServoPin 15
 // set it be servo pin, but just according to the GPIO number
 Servo servo;
 
