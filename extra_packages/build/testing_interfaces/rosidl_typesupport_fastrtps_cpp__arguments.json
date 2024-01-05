@@ -1,0 +1,19 @@
+{
+  "package_name": "testing_interfaces",
+  "output_dir": "/home/fai/Documents/PlatformIO/Projects/trial/extra_packages/build/testing_interfaces/rosidl_typesupport_fastrtps_cpp/testing_interfaces",
+  "template_dir": "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource",
+  "idl_tuples": [
+    "/home/fai/Documents/PlatformIO/Projects/trial/extra_packages/build/testing_interfaces/rosidl_adapter/testing_interfaces:srv/ServoControl.idl"
+  ],
+  "target_dependencies": [
+    "/opt/ros/foxy/lib/rosidl_typesupport_fastrtps_cpp/rosidl_typesupport_fastrtps_cpp",
+    "/opt/ros/foxy/lib/python3.8/site-packages/rosidl_typesupport_fastrtps_cpp/__init__.py",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/idl__rosidl_typesupport_fastrtps_cpp.hpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/idl__type_support.cpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/msg__rosidl_typesupport_fastrtps_cpp.hpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/msg__type_support.cpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/srv__rosidl_typesupport_fastrtps_cpp.hpp.em",
+    "/opt/ros/foxy/share/rosidl_typesupport_fastrtps_cpp/resource/srv__type_support.cpp.em",
+    "/home/fai/Documents/PlatformIO/Projects/trial/extra_packages/build/testing_interfaces/rosidl_adapter/testing_interfaces/srv/ServoControl.idl"
+  ]
+}

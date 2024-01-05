@@ -1,0 +1,19 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from testing_interfaces/srv/ServoControl.srv
+// generated code does not contain a copyright notice
+
+
+module testing_interfaces {
+  module srv {
+    @verbatim (language="comment", text=
+      " format" "\n"
+      " above --- is request" "\n"
+      " under --- is response")
+    struct ServoControl_Request {
+      int32 angle;
+    };
+    struct ServoControl_Response {
+      string response;
+    };
+  };
+};

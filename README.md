@@ -1,3 +1,4 @@
+## using Micro_ros to set up the node in stm32
 1. Please according to the following website to create the ros2 environment on your laptop/ machine
 https://micro.ros.org/docs/tutorials/core/first_application_linux/
 
@@ -9,7 +10,11 @@ for instance, to connect it through the serail connection, type the following co
 
 ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0
 
-to send one time message as publisher to specific topics
+if you looking for running on wifi, use the following command instead
+ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
+
+
+## How to send one time message as publisher to specific topices?
 example:
 ros2 topic pub /led_cmd std_msgs/msg/Int32 "{data: 0}" --once
 where, 
@@ -17,11 +22,12 @@ where,
 std_msgs/msg/Int32 is datatype
 0 is the data
 
+## service
 ros2 service list
 cmd for one time service request
 ros2 service call /micro_ros_service example_interfaces/srv/AddTwoInts "{a: 114, b: 514}"
 
-
+## client
 ros2 client
 
 we need to build the server side in our pc, we can use python code or c++ code to do it, for reference, I will do it in both languages for you guys 
@@ -45,3 +51,6 @@ for cpp, we type "ros2 run microros_server microros_server_cpp"
 
 
 --Kenny 2024-1-5s
+
+For set up the interface, please read the README.md in testing_interfaces folder
+

@@ -1,6 +1,4 @@
-// this serve as template for set up the micro_ros client 
-// to send the request, set up a timer for doing it
-// also set up a publisher to publish the result
+// this serve as template for set up the micro_ros service
 
 //include the library if needed
 
@@ -14,41 +12,27 @@
 #include <rclc/executor.h>
 
 #include <example_interfaces/srv/add_two_ints.h> //import the interface from extra_package
+# include <testing_interfaces/srv/servo_control.h>
 
-#include <std_msgs/msg/int32.h>
-
+// #include <example_interfaces/srv/add_two_ints.h> //import the interface from extra_package
+// #include <example_interfaces/srv/setbool.h>
 rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
 rcl_node_t node;
 
-rcl_client_t client; //declare client
+rcl_service_t service; //declare service
+example_interfaces__srv__AddTwoInts_Request req; //declare request
 example_interfaces__srv__AddTwoInts_Response res; //declare response
 
-rcl_publisher_t publisher; //declare publisher
-std_msgs__msg__Int32 message; //declare message
-
-rcl_timer_t timer; //declare timer
-int64_t seq_num;
-// callback function for client
-void client_callback(const void * msg){
-    //cast the message
-    example_interfaces__srv__AddTwoInts_Response * msg_in = (example_interfaces__srv__AddTwoInts_Response *)msg;
-    message.data = msg_in->sum; //change the data of msg
-    rcl_publish(&publisher, &message, NULL); //publish the message
-}
-
-
-// callback function for timer
-void timer_callback(rcl_timer_t * timer, int64_t last_call_time){
-    RCLC_UNUSED(last_call_time);
-    if(timer != NULL){
-      //cast the request
-      example_interfaces__srv__AddTwoInts_Request req;
-      req.a = rand()%100;
-      req.b = rand()%100;
-      rcl_send_request(&client, &req, &seq_num); //send the request
-    }
+// callback function for service
+void service_callback(const void * req, void * res){
+    //cast the request and response
+    example_interfaces__srv__AddTwoInts_Request * req_in = (example_interfaces__srv__AddTwoInts_Request *)req;
+    example_interfaces__srv__AddTwoInts_Response * res_in = (example_interfaces__srv__AddTwoInts_Response *)res;
+    
+    res_in->sum = req_in->a + req_in->b; //do the operation
+    //here already change the data of res (as using pointer here)
 }
 
 void setup()
@@ -65,18 +49,11 @@ void setup()
     rclc_node_init_default(&node, "node_name", "", &support);
 
     // create executor
-    rclc_executor_init(&executor, &support.context, 2, &allocator);
+    rclc_executor_init(&executor, &support.context, 1, &allocator);
 
-    // create client
-    rclc_client_init_default(&client, &node, ROSIDL_GET_SRV_TYPE_SUPPORT(example_interfaces, srv, AddTwoInts), "/micro_ros_client");
-    rclc_executor_add_client(&executor, &client, &res, &client_callback); //add client to executor
-
-    // create publisher
-    rclc_publisher_init_default(&publisher, &node, ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32), "/result");
-
-    // create timer
-    rclc_timer_init_default(&timer, &support, RCL_MS_TO_NS(1000), timer_callback); //timer with 1000ms = 1s
-    rclc_executor_add_timer(&executor, &timer); //add timer to executor
+    // create service
+    rclc_service_init_default(&service, &node, ROSIDL_GET_SRV_TYPE_SUPPORT(example_interfaces, srv, AddTwoInts), "/micro_ros_service");
+    rclc_executor_add_service(&executor, &service, &req, &res, &service_callback); //add service to executor
 }
 
 void loop(){

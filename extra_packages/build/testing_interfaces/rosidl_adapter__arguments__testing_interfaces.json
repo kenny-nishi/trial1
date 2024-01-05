@@ -1,0 +1,6 @@
+{
+  "package_name": "testing_interfaces",
+  "non_idl_tuples": [
+    "/home/fai/Documents/PlatformIO/Projects/trial/extra_packages/testing_interfaces:srv/ServoControl.srv"
+  ]
+}
