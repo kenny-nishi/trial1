@@ -3,7 +3,9 @@
 https://micro.ros.org/docs/tutorials/core/first_application_linux/
 
 2. in each time, please enter the correct folder and correct virtual environment before using it
-for example, if you follow the first step, you should enter the microros_ws directory first, then type "source install/local_setup.bash" to enter the virtual environment
+for example, if you follow the first step, you should enter the microros_ws directory first, then type 
+"source install/local_setup.bash" 
+to enter the virtual environment
 
 3. Run the ros2 command
 for instance, to connect it through the serail connection, type the following command
@@ -54,3 +56,7 @@ for cpp, we type "ros2 run microros_server microros_server_cpp"
 
 For set up the interface, please read the README.md in testing_interfaces folder
 
+
+### for one time running the signal to the servo
+ros2 service call /change_angle testing_interfaces/srv/ServoControl "{angle: 180}"
+please look for the ServoAdjust_wifi.cpp for more detailed

@@ -7,6 +7,7 @@
 from ultralytics import YOLO
 import cv2
 from ultralytics.utils.plotting import Annotator 
+import time 
 
 model = YOLO('yolov8n.pt')
 cap = cv2.VideoCapture(0)
@@ -34,6 +35,19 @@ while True:
     cv2.imshow('YOLO V8 Detection', img)     
     if cv2.waitKey(1) & 0xFF == ord(' '):
         break
-
+    
 cap.release()
 cv2.destroyAllWindows()
+
+
+"""
+TODO:
+1. connect stm32 to this program
+2. keep track with specific object
+3. output the coordinate of the object
+4. compute the distance between the object and the center of the camera images
+5. calculate the angle need to be turned to face the object (like left or right how many degree)
+6. pass the shiting degree data to the stm32 ndoe (will be done by kenny)
+
+
+"""
