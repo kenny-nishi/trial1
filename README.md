@@ -14,7 +14,7 @@ if you looking for running on wifi, use the following command instead
 ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
 
 
-## How to send one time message as publisher to specific topices?
+## How to send one time message as publisher to specific topics?
 example:
 ros2 topic pub /led_cmd std_msgs/msg/Int32 "{data: 0}" --once
 where, 
