@@ -15,7 +15,7 @@ where the testing_interfaces are the name of the interface
 cd testing_interfaces
 mkdir srv
 cd srv
-touch ServoControl.msg # remainder here, the first character must be Capital
+touch ServoControl.srv # remainder here, the first character must be Capital
 
 check the ServoControl.srv for more reference
 
