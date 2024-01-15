@@ -16,7 +16,7 @@ if you looking for running on wifi, use the following command instead
 ros2 run micro_ros_agent micro_ros_agent udp4 --port 8888
 
 
-## How to send one time message as publisher to specific topices?
+## How to send one time message as publisher to specific topics?
 example:
 ros2 topic pub /led_cmd std_msgs/msg/Int32 "{data: 0}" --once
 where, 
@@ -50,6 +50,13 @@ go back to the sserver_ws layer, and type "colcon build" to build the packagess
 and then source with the environment "source install/local_setup.bash"
 final to run the server, type "ros2 run microros_server microros_server" for python one
 for cpp, we type "ros2 run microros_server microros_server_cpp"
+
+## runYolo.py
+Run $ pip install ultralytics 
+If there's AttributeError and some libraries are missing, such as cv2, cpuinfo, ultralytics, you're missing some libraries then just 
+search the libaries and pip install them back.
+Simple python3 runYolo.py, then it will display your webcam with detection boxes, terminal will show each detected box name and bounding box coordinates.
+for more information in working with the result detection, follow documentations in https://docs.ultralytics.com/reference/engine/results/#ultralytics.engine.results.Results.verbose
 
 
 --Kenny 2024-1-5s
