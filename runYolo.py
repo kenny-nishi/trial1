@@ -8,11 +8,26 @@ from ultralytics import YOLO
 import cv2
 from ultralytics.utils.plotting import Annotator 
 import time 
+import glob
+from PIL import Image
+import os
+import numpy as np
 
 model = YOLO('yolov8n.pt')
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)
 cap.set(4, 480)
+
+
+
+# Create a directory if it doesn't exist
+if not os.path.exists("cropped_images"):
+    os.makedirs("cropped_images")
+
+# Remove all files from the directory
+for file_name in os.listdir("cropped_images"):
+    os.remove(os.path.join("cropped_images", file_name))
+
 
 while True:
     _, img = cap.read()
@@ -24,15 +39,34 @@ while True:
         annotator = Annotator(img)
         
         boxes = r.boxes
-        for box in boxes:
+        for index,box in enumerate(boxes):
             
             b = box.xyxy[0]  # get box coordinates in (left, top, right, bottom) format
             c = box.cls # get box class value, use model.names[int(c)] to get name of the class, such as person, remote
+
+            crop_rectangle = (b[0], b[1], b[2], b[3])
+            # Convert the Tensor to a numpy array
+            print(type(img))
+            img_array = img.cpu().numpy()
+
+            # Create an Image object from the numpy array
+            img_pil = Image.fromarray(np.uint8(img_array))
+
+            # Crop the image
+            cropped_im = img_pil.crop(crop_rectangle)
+            # cropped_im = Image.fromarray(img).crop(crop_rectangle)
+            cropped_im.save("cropped_images/cropped_image_{}.jpg".format(index))
+
+
             annotator.box_label(b, model.names[int(c)]) # display the bounding box on screen 
             print(model.names[int(c)], ":", b) # Print the box coordinate 
-          
+        break
     img = annotator.result()  
-    cv2.imshow('YOLO V8 Detection', img)     
+    cv2.imshow('YOLO V8 Detection', img)  
+
+
+
+
     if cv2.waitKey(1) & 0xFF == ord(' '):
         break
     
