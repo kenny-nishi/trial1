@@ -11,8 +11,8 @@
 
 #include <WiFi.h>
 #include <testing_interfaces/srv/servo_control.h>
-#include <rosidl_runtime_c/string_functions.h>
-// #include <std_msgs/msg/string.h>
+
+#include <std_msgs/msg/string.h>
 rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
@@ -33,10 +33,12 @@ int32_t current_angle = 90;
 
 
 // function to change the angle of servo
-String change_angle(int32_t target_angle){
+rosidl_runtime_c__String change_angle(int32_t target_angle){
     //here you need to write the code to change the angle of servo
     //and return the string of the result
-    // rosidl_runtime_c__String result;
+    rosidl_runtime_c__String result;
+
+
     //arduino code
     #define ServoPin 15
     if (current_angle < target_angle){
@@ -54,9 +56,14 @@ String change_angle(int32_t target_angle){
 
     current_angle = target_angle;
 
-    String my_string = "The angle is changed to " + String(target_angle) + " degree.";
-    return my_string;
+    delay(1000);
+
+
+    String result_string = "The angle is changed to: ";
+    result.data = "HELLO";
+    return result;
 }
+
 
 
 
@@ -65,10 +72,7 @@ void service_callback(const void * req, void * res){
     //cast the request and response
     testing_interfaces__srv__ServoControl_Request * req_in = (testing_interfaces__srv__ServoControl_Request *)req;
     testing_interfaces__srv__ServoControl_Response * res_in = (testing_interfaces__srv__ServoControl_Response *)res;
-    String res_string = change_angle(req_in->angle);
-
-    // change the type of response from string to rosidl_runtime_c__String for return the string
-    rosidl_runtime_c__String__assignn(&res_in->response, res_string.c_str(), res_string.length());
+    res_in->response = change_angle(req_in->angle);
     //here already change the data of res (as using pointer here)
 }
 
@@ -77,7 +81,7 @@ void setup()
     Serial.begin(115200);
     // use wifi to communicate
     IPAddress agent_ip;
-    agent_ip.fromString("192.168.43.146");//here you need to change the ip address to your computer ip address
+    agent_ip.fromString("192.168.43.152");//here you need to change the ip address to your computer ip address
     // set wifi name, password, ip address and port
     set_microros_wifi_transports("faiphone", "12345678", agent_ip, 8888);
     // delay 2s for wifi connection
@@ -88,14 +92,13 @@ void setup()
     rclc_support_init(&support, 0, NULL, &allocator);
 
     // create node
-    rclc_node_init_default(&node, "servo_node", "", &support);
+    rclc_node_init_default(&node, "node_name", "", &support);
 
     // create executor
     rclc_executor_init(&executor, &support.context, 1, &allocator);
 
     rclc_service_init_default(&service, &node, ROSIDL_GET_SRV_TYPE_SUPPORT(testing_interfaces, srv, ServoControl), "/change_angle");
 
-    res.response.data = (char*)malloc(sizeof(char)*128);
     //need allocate the memory for response (as it is string) (128 char)
     rclc_executor_add_service(&executor, &service, &req, &res, &service_callback); //add service to executor
 

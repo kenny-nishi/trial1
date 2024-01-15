@@ -3,7 +3,7 @@ import requests
 import glob
 from transformers import CLIPProcessor, CLIPModel
 
-model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+model_clip = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 # model = CLIPModel.from_pretrained("./clip-vit-base-patch32/")
 processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 #  processor = CLIPProcessor.from_pretrained("./clip-vit-base-patch32/")
@@ -11,7 +11,7 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 # img_path = "testing.jpeg"
 # image = Image.open(img_path)
 # Get a list of file paths
-img_paths = glob.glob("images/*")
+img_paths = glob.glob("new_directory/*")
 image = []
 for img_path in img_paths:
     print(img_path)
@@ -19,7 +19,7 @@ for img_path in img_paths:
 text = ["sleeping"]
 inputs = processor(text=text, images=image, return_tensors="pt", padding=True)
 
-outputs = model(**inputs)
+outputs = model_clip(**inputs)
 # logits_per_image = outputs.logits_per_image  # this is the image-text similarity score
 # print(logits_per_image )
 # probs = logits_per_image.softmax(dim=1)  # we can take the softmax to get the label probabilities
