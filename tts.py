@@ -1,3 +1,6 @@
+# pip install tts
+
+
 # import all the modules that we will need to use
 from TTS.utils.manage import ModelManager
 from TTS.utils.synthesizer import Synthesizer
