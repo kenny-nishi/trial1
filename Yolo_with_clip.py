@@ -95,7 +95,7 @@ def main():
             class_list.append(class_name)
 
         # step 2: using clip model to find the most likely one image
-        instructions = "a guy with a brown hair"
+        instructions = "The person dressed in white shirt"
         tensor = clip_selection(instructions,len(coordinate_list))
         index = tensor.item()
         b = coordinate_list[index]
@@ -109,7 +109,8 @@ def main():
         prev_b = b  # Store current frame's boundary box coordinates as previous
 
         # display the image with the target
-        annotator.box_label(b, class_name)  # display the bounding box on screen
+        # annotator.box_label(b, class_name)  # display the bounding box on screen
+        annotator.box_label(b, instructions)  # display the bounding box on screen
         print(class_name, ":", b)  # Print the box coordinate
         img = annotator.result()  
         cv2.imshow('YOLO V8 Detection', img)   
