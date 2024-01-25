@@ -33,9 +33,17 @@ def update_shifting(b,prev_b):
 
 def clip_selection(instructions,index_count):
     image = []
+    if index_count == 0:
+        return "error"
     for i in range(index_count):
-        img_path = directory + str(i) + '.png'
-        image.append(Image.open(img_path))
+        try:
+            img_path = directory + str(i) + '.png'
+            image.append(Image.open(img_path))
+        except Exception as ex:
+            print(f"An error occurred while opening the image: {ex}")
+
+
+        
     inputs = processor(text=instructions, images=image, return_tensors="pt", padding=True)
     outputs = model_clip(**inputs)
     logits_per_text = outputs.logits_per_text
@@ -51,7 +59,7 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 directory = 'new_directory/'
 
 def main():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture('http://172.20.10.2:80/mjpeg') #default 1, 'http://172.20.10.2:80/mjpeg'
     cap.set(3, 640)
     cap.set(4, 480)
 
@@ -95,8 +103,10 @@ def main():
             class_list.append(class_name)
 
         # step 2: using clip model to find the most likely one image
-        instructions = "The person dressed in white shirt"
+        instructions = "human eyes"
         tensor = clip_selection(instructions,len(coordinate_list))
+        if tensor == 'error':
+            continue
         index = tensor.item()
         b = coordinate_list[index]
         print(index)
