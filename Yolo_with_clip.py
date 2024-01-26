@@ -9,7 +9,9 @@ import numpy as np
 import time
 from transformers import CLIPProcessor, CLIPModel
 
+message = ''
 # need to change the following code, see TODO at bottom
+# the version Ryan Suggested
 def update_shifting(b,prev_b):
     degree_constant = 0.036
     if prev_b is not None:
@@ -29,6 +31,21 @@ def update_shifting(b,prev_b):
         else:
             print("Target did not move horizontally")
         print("degree shifted =",left_offset*degree_constant)
+
+# the version Kenny wrote
+def update_shifting_just_compare_with_center(b,center):
+    degree_constant = 0.036
+    # calculate the center of the boundary box
+    x1, y1, x2, y2 = b
+    global message
+    center_boundary_box = ((x1+x2)/2, (y1+y2)/2)
+    # compare it should move right/left
+    if center_boundary_box[0] > center[0]:
+        print("Target shifted left")
+        message = 'left'
+    elif center_boundary_box[0] < center[0]:
+        print("Target shifted right")
+        message = 'right'
 
 
 def clip_selection(instructions,index_count):
@@ -59,9 +76,9 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 directory = 'new_directory/'
 
 def main():
-    cap = cv2.VideoCapture('http://172.20.10.2:80/mjpeg') #default 1, 'http://172.20.10.2:80/mjpeg'
-    cap.set(3, 640)
-    cap.set(4, 480)
+    cap = cv2.VideoCapture('http://192.168.1.109:80/mjpeg') #default 1, 'http://172.20.10.2:80/mjpeg'
+    # cap.set(3, 640)
+    # cap.set(4, 480)
 
     # img_paths = glob.glob(f"{}*", directory)
     img_paths = glob.glob(f"{directory}*")
@@ -83,6 +100,14 @@ def main():
         _, img = cap.read()
         coordinate_list = []
         class_list = []
+
+        # compute the size of image
+        height, width, _ = img.shape
+        # print(height, width) # 480, 640
+        
+        # the center of the image
+        center = (width / 2, height / 2)
+        # print(center) # (320.0, 240.0)
 
         # step 1: using Yolo model to capture the boundary box and find it center + cap the image
         result = model_yolo.predict(img)[0]
@@ -109,19 +134,21 @@ def main():
             continue
         index = tensor.item()
         b = coordinate_list[index]
-        print(index)
+        # print(index)
         class_name = class_list[index]
-        print(class_name)
+        # print(class_name)
 
         # step 3: update the shifting issue and only display the image with the target 
         # update shifting
-        update_shifting(b,prev_b)
-        prev_b = b  # Store current frame's boundary box coordinates as previous
+        # update_shifting(b,prev_b)
+        # prev_b = b  # Store current frame's boundary box coordinates as previous
+        update_shifting_just_compare_with_center(b,center)
 
         # display the image with the target
         # annotator.box_label(b, class_name)  # display the bounding box on screen
-        annotator.box_label(b, instructions)  # display the bounding box on screen
-        print(class_name, ":", b)  # Print the box coordinate
+        # annotator.box_label(b, instructions)  # display the bounding box on screen
+        annotator.box_label(b, message)  # display the bounding box on screen
+        # print(class_name, ":", b)  # Print the box coordinate
         img = annotator.result()  
         cv2.imshow('YOLO V8 Detection', img)   
 
@@ -135,12 +162,12 @@ if __name__ == "__main__":
     main()
 """
 TODO:
-1. the shifting issue should figure out how to make the target in the center of the image, but not compare with the previous frame
+1. the shifting issue should figure out how to make the target in the center of the image, but not compare with the previous frame (being fixed by Kenny's version)
 2. reorganize the code, make it more readable (finished)
-3. write the ros2 interface for the servo use
+3. write the ros2 interface for the servo use (will done in 27-1-24)
 3.1 should be mainly program in the micro_ros side, act as a client to ask eye camera to get the image
 3.2 write the server side for the camera (should be the esp32 camera) for client to get the image from the camera
-4. find some way to make the esp32 camera work 
+4. find some way to make the esp32 camera work (done)
 
 kenny
 """
