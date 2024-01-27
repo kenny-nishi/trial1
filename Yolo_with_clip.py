@@ -76,7 +76,7 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 directory = 'new_directory/'
 
 def main():
-    cap = cv2.VideoCapture('http://192.168.1.109:80/mjpeg') #default 1, 'http://172.20.10.2:80/mjpeg'
+    cap = cv2.VideoCapture('http://192.168.1.108:80/mjpeg') #default 1, 'http://172.20.10.2:80/mjpeg'
     # cap.set(3, 640)
     # cap.set(4, 480)
 

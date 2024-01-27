@@ -23,6 +23,8 @@ testing_interfaces__srv__ServoControl_Request req; //declare request
 testing_interfaces__srv__ServoControl_Response res; //declare response
 
 
+#include <rosidl_runtime_c/string_functions.h>
+
 // set up for servo
 #include <ESP32Servo.h>
 #define ServoPin 15
@@ -33,12 +35,9 @@ int32_t current_angle = 90;
 
 
 // function to change the angle of servo
-rosidl_runtime_c__String change_angle(int32_t target_angle){
+String change_angle(int32_t target_angle){
     //here you need to write the code to change the angle of servo
     //and return the string of the result
-    rosidl_runtime_c__String result;
-
-
     //arduino code
     #define ServoPin 15
     if (current_angle < target_angle){
@@ -60,8 +59,9 @@ rosidl_runtime_c__String change_angle(int32_t target_angle){
 
 
     String result_string = "The angle is changed to: ";
-    result.data = "HELLO";
-    return result;
+    // result.data = "HELLO";
+    // rosidl_runtime_c__String__assign(&result, "Hello");
+    return result_string;
 }
 
 
@@ -72,7 +72,9 @@ void service_callback(const void * req, void * res){
     //cast the request and response
     testing_interfaces__srv__ServoControl_Request * req_in = (testing_interfaces__srv__ServoControl_Request *)req;
     testing_interfaces__srv__ServoControl_Response * res_in = (testing_interfaces__srv__ServoControl_Response *)res;
-    res_in->response = change_angle(req_in->angle);
+    String str = change_angle(req_in->angle);
+    rosidl_runtime_c__String__assign(&res_in->response, str.c_str());
+    // rosidl_runtime_c__String__assign(res->response,str.c_str());
     //here already change the data of res (as using pointer here)
 }
 
@@ -81,9 +83,9 @@ void setup()
     Serial.begin(115200);
     // use wifi to communicate
     IPAddress agent_ip;
-    agent_ip.fromString("192.168.43.152");//here you need to change the ip address to your computer ip address
+    agent_ip.fromString("192.168.1.112");//here you need to change the ip address to your computer ip address
     // set wifi name, password, ip address and port
-    set_microros_wifi_transports("faiphone", "12345678", agent_ip, 8888);
+    set_microros_wifi_transports("TP-LINK_2503", "lau19840215", agent_ip, 8888);
     // delay 2s for wifi connection
     delay(2000);
  
