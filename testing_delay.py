@@ -1,36 +1,29 @@
+# using threading to solve the delay problem
+
+import threading
 from ultralytics import YOLO
 import cv2
 from ultralytics.utils.plotting import Annotator
 import time 
-import glob
 from PIL import Image
 import os
-import numpy as np
 import time
 from transformers import CLIPProcessor, CLIPModel
 
+class TakeCameraLatestPictureThread(threading.Thread):
+    def __init__(self, camera):
+        self.camera = camera
+        self.frame = None
+        super().__init__()
+        # Start thread
+        self.start()
+
+    def run(self):
+        while True:
+            ret, self.frame = self.camera.read()
+
 message = ''
 # need to change the following code, see TODO at bottom
-# the version Ryan Suggested
-def update_shifting(b,prev_b):
-    degree_constant = 0.036
-    if prev_b is not None:
-        prev_left, prev_left_top, prev_right, prev_right_bottom= prev_b
-        curr_left, curr_left_top, curr_right, curr_right_bottom = b
-
-        # Calculate the offset between previous and current frame boundary box
-        left_offset = curr_left - prev_left
-        right_offset = curr_right - prev_right
-        left_top_offset = curr_left_top - prev_left_top
-        right_bottom_offset = curr_right_bottom - prev_right_bottom
-        # Determine the movement based on the offset
-        if left_offset > 17:
-            print("Target shifted left")
-        elif left_offset < -17:
-            print("Target shifted right")
-        else:
-            print("Target did not move horizontally")
-        print("degree shifted =",left_offset*degree_constant)
 
 # the version Kenny wrote
 def update_shifting_just_compare_with_center(b,center):
@@ -63,7 +56,6 @@ def clip_selection(instructions,index_count):
     outputs = model_clip(**inputs)
     logits_per_text = outputs.logits_per_text
     probs = logits_per_text.softmax(dim=1)
-    print(probs)
     # return the index, which is the file name of that
     return probs.argmax(dim=1)
 
@@ -74,18 +66,18 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 directory = 'new_directory/'
 
 def main():
-    cap = cv2.VideoCapture('http://192.168.1.108:80/mjpeg') #default 1, 'http://172.20.10.2:80/mjpeg'
-    # cap.set(3, 640)
-    # cap.set(4, 480)
+    video_capture = cv2.VideoCapture("http://192.168.1.103:80/mjpeg")
+    video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    if not video_capture.isOpened():
+        raise Exception("Could not open video device")
+    latest_picture = TakeCameraLatestPictureThread(video_capture)
 
     # img_paths = glob.glob(f"{}*", directory)
-    img_paths = glob.glob(f"{directory}*")
+    # img_paths = glob.glob(f"{directory}*")
 
     if not os.path.exists(directory):
         os.makedirs(directory)
-
-
-    prev_b = None  # Variable to store previous frame's boundary box coordinates
 
     while True:
 
@@ -95,12 +87,18 @@ def main():
             os.remove(file_path)
 
         # capture the image
-        _, img = cap.read()
+        # Check if the frame is valid
+        while(True):
+            if latest_picture.frame is not None and latest_picture.frame.shape[0] > 0 and latest_picture.frame.shape[1] > 0:
+                # Display the resulting frame
+                img = latest_picture.frame
+                break
         coordinate_list = []
         class_list = []
 
         # compute the size of image
         height, width, _ = img.shape
+        # print(height, width) # 480, 640
         # print(height, width) # 480, 640
         
         # the center of the image
@@ -150,11 +148,13 @@ def main():
         img = annotator.result()  
         cv2.imshow('YOLO V8 Detection', img)   
 
-        if cv2.waitKey(1) & 0xFF == ord(' '):
-            break
-        # time.sleep(0.5)
 
-    cap.release()
+        # Exit the loop if 'q' is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    # Release the video capture and close the window
+    video_capture.release()
     cv2.destroyAllWindows()
 if __name__ == "__main__":
     main()
