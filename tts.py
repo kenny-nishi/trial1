@@ -1,11 +1,13 @@
 # pip install tts
+# to locate the path of the tts, press type the following line: pip show tts
 
 
 # import all the modules that we will need to use
 from TTS.utils.manage import ModelManager
 from TTS.utils.synthesizer import Synthesizer
 
-path = "/Users/mm/Desktop/CE4_Sem1/FYP/ultralytics/.venv/lib/python3.11/site-packages/TTS/.models.json"
+# path = "/Users/mm/Desktop/CE4_Sem1/FYP/ultralytics/.venv/lib/python3.11/site-packages/TTS/.models.json"
+path = "/home/fai/.local/lib/python3.8/site-packages/TTS/.models.json"
 
 model_manager = ModelManager(path)
 
