@@ -66,7 +66,7 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 directory = 'new_directory/'
 
 def main():
-    video_capture = cv2.VideoCapture("http://192.168.1.103:80/mjpeg")
+    video_capture = cv2.VideoCapture("http://192.168.43.38:80/mjpeg")
     video_capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     video_capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
     if not video_capture.isOpened():
@@ -134,12 +134,6 @@ def main():
         class_name = class_list[index]
         # print(class_name)
 
-        # step 3: update the shifting issue and only display the image with the target 
-        # update shifting
-        # update_shifting(b,prev_b)
-        # prev_b = b  # Store current frame's boundary box coordinates as previous
-        update_shifting_just_compare_with_center(b,center)
-        time.sleep(1)
         # display the image with the target
         # annotator.box_label(b, class_name)  # display the bounding box on screen
         # annotator.box_label(b, instructions)  # display the bounding box on screen
@@ -147,6 +141,14 @@ def main():
         # print(class_name, ":", b)  # Print the box coordinate
         img = annotator.result()  
         cv2.imshow('YOLO V8 Detection', img)   
+        
+        # step 3: update the shifting issue and only display the image with the target 
+        # update shifting
+        # update_shifting(b,prev_b)
+        # prev_b = b  # Store current frame's boundary box coordinates as previous
+        update_shifting_just_compare_with_center(b,center)
+        time.sleep(1.5)
+
 
 
         # Exit the loop if 'q' is pressed

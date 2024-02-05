@@ -58,7 +58,7 @@ String change_angle(int32_t target_angle){
     delay(1000);
 
 
-    String result_string = "The angle is changed to: ";
+    String result_string = "";
     // result.data = "HELLO";
     // rosidl_runtime_c__String__assign(&result, "Hello");
     return result_string;
@@ -83,9 +83,9 @@ void setup()
     Serial.begin(115200);
     // use wifi to communicate
     IPAddress agent_ip;
-    agent_ip.fromString("192.168.1.112");//here you need to change the ip address to your computer ip address
+    agent_ip.fromString("192.168.227.152");//here you need to change the ip address to your computer ip address
     // set wifi name, password, ip address and port
-    set_microros_wifi_transports("TP-LINK_2503", "lau19840215", agent_ip, 8888);
+    set_microros_wifi_transports("fkyou","fuckoffbitch", agent_ip, 8888);
     // delay 2s for wifi connection
     delay(2000);
  
