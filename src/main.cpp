@@ -43,19 +43,19 @@ String change_angle(int32_t target_angle){
     if (current_angle < target_angle){
         for (int i = current_angle; i <= target_angle; i++){
         servo.write(i);
-        delay(20);
+        // delay(20);
         }
     }
     else{
         for (int i = current_angle; i >= target_angle; i--){
         servo.write(i);
-        delay(20);
+        // delay(20);
         }
     }
 
     current_angle = target_angle;
 
-    delay(1000);
+    // delay(1000);
 
 
     String result_string = "";
@@ -83,9 +83,9 @@ void setup()
     Serial.begin(115200);
     // use wifi to communicate
     IPAddress agent_ip;
-    agent_ip.fromString("192.168.227.152");//here you need to change the ip address to your computer ip address
+    agent_ip.fromString("192.168.43.146");//here you need to change the ip address to your computer ip address
     // set wifi name, password, ip address and port
-    set_microros_wifi_transports("fkyou","fuckoffbitch", agent_ip, 8888);
+    set_microros_wifi_transports("faiphone","12345678", agent_ip, 8888);
     // delay 2s for wifi connection
     delay(2000);
  
@@ -110,6 +110,5 @@ void setup()
 }
 
 void loop(){
-    delay(1000);
     rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1000));
 }
