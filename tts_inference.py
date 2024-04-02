@@ -1,3 +1,4 @@
+# best model, training file in binchilin: training_best folder
 import os
 import torch
 import torchaudio
